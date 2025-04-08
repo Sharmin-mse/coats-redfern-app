@@ -1,3 +1,16 @@
+# Reduce extra top padding
+st.markdown(
+    """
+    <style>
+    .block-container {
+        padding-top: 1rem;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+
 import streamlit as st
 import pandas as pd
 import numpy as np
