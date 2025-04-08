@@ -6,12 +6,15 @@ import scipy.optimize as opt
 from sklearn.metrics import r2_score, mean_absolute_error
 from io import BytesIO
 
-# Reduce extra top padding
+st.set_page_config(page_title="Coats-Redfern Kinetic Model Fitting", layout="centered")
+
 st.markdown(
     """
     <style>
     .block-container {
         padding-top: 1rem;
+        padding-left: 2rem;
+        padding-right: 2rem;
     }
     </style>
     """,
