@@ -59,20 +59,24 @@ if uploaded_file:
             st.error("❌ Error: Your file must contain **'Temperature/K'** and **'Degree of Reaction (α)'** columns.")
             st.stop()
 
-        # Show the first few rows
+        # Show preview
         st.markdown("✅ **File Preview:**")
         st.dataframe(df.head())
 
+        # Extract data
         T = df["Temperature/K"].values
         alpha = df["Degree of Reaction (α)"].values
 
+        # Filter valid α range
         valid = (alpha > 0.1) & (alpha < 0.9)
         T = T[valid]
         alpha = alpha[valid]
 
+        # Calculate g(α) and y
         g_alpha = model_dict[model_name](alpha)
         y = np.log(g_alpha / T**2)
 
+        # Coats-Redfern function
         def coats_redfern(T, E_a, A):
             T_mean = np.mean(T)
             term_inside_log = 1 - ((2 * 8.314 * T_mean) / E_a)
@@ -81,7 +85,7 @@ if uploaded_file:
             ln_term = np.log(log_argument)
             return - (E_a / 8.314) * (1 / T) + ln_term
 
-        # Fitting with better initial guess and higher maxfev
+        # Fit the model
         params, _ = opt.curve_fit(
             coats_redfern, T, y,
             p0=[120000, 1e8],
@@ -90,12 +94,14 @@ if uploaded_file:
 
         E_fit, A_fit = params
         E_fit_kJ = E_fit / 1000
-
         y_fit = coats_redfern(T, E_fit, A_fit)
+
+        # Evaluation metrics
         r2 = r2_score(y, y_fit)
         mae = mean_absolute_error(y, y_fit)
         mape = np.mean(np.abs((y - y_fit) / y)) * 100
 
+        # Plotting
         fig, ax = plt.subplots()
         ax.scatter(1/T, y, label='Data', color='red', alpha=0.6)
         ax.plot(1/T, y_fit, label='Fit', color='blue')
@@ -105,15 +111,20 @@ if uploaded_file:
         ax.legend()
         ax.grid(True)
 
+        # ✨ Rotate + scientific notation on x-axis
+        plt.xticks(rotation=45)
+        ax.ticklabel_format(axis='x', style='sci', scilimits=(0, 0))
+
         st.pyplot(fig)
 
+        # Output parameters
         st.markdown(f"**Activation Energy (Eₐ):** {E_fit_kJ:.2f} kJ/mol")
         st.markdown(f"**Pre-exponential Factor (A):** {A_fit:.2e} 1/min")
         st.markdown(f"**R²:** {r2:.4f}")
         st.markdown(f"**MAE:** {mae:.4f}")
         st.markdown(f"**MAPE:** {mape:.2f}%")
 
-        # Downloadable PNG
+        # Download plot
         buf = BytesIO()
         fig.savefig(buf, format="png", dpi=300)
         st.download_button(
