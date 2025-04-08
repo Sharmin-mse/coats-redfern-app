@@ -34,18 +34,18 @@ uploaded_file = st.file_uploader("📤 Upload Excel File", type=["xlsx"])
 beta = st.number_input("🔥 Enter Heating Rate (β) in K/min", value=20.0)
 
 model_dict = {
-    "D2: 2D Diffusion": lambda a: (1 - a) * np.log(1 - a) + a,
-    "D3: 3D Diffusion (Jander)": lambda a: (1 - (1 - a) ** (1/3)) ** 2,
-    "D4: 3D Diffusion (Ginstling–Brounshtein)": lambda a: 1 - (2 * a / 3) - (1 - a)**(2 / 3),
-    "A2: Avrami-Erofeev (n=2)": lambda a: (-np.log(1 - np.clip(a, 0, 0.99999))) ** 0.5,
-    "A3: Avrami-Erofeev (n=3)": lambda a: (-np.log(1 - np.clip(a, 0, 0.99999))) ** (1 / 3),
-    "R2: Contracting Cylinder": lambda a: 1 - (1 - a) ** (1 / 2),
-    "R3: Contracting Sphere": lambda a: 1 - (1 - a) ** (1 / 3),
-    "C1: First Order": lambda a: -np.log(1 - np.clip(a, 0, 0.99999)),
-    "C2: Second Order": lambda a: (1 - a)**-1 - 1,
-    "P2: Power Law (n=2)": lambda a: a ** 0.5,
-    "P3: Power Law (n=3)": lambda a: a ** (1/3),
-    "P4: Power Law (n=4)": lambda a: a ** (1/4)
+    "D2: 2D Diffusion Controlled Model(Valensi model)": lambda a: (1 - a) * np.log(1 - a) + a,
+    "D3: 3D Diffusion Controlled Model (Jander model)": lambda a: (1 - (1 - a) ** (1/3)) ** 2,
+    "D4: 3D Diffusion Controlled Model (Ginstling–Brounshtein model)": lambda a: 1 - (2 * a / 3) - (1 - a)**(2 / 3),
+    "A2: Nucleation and Growth (Avrami–Erofeev, n = 2)": lambda a: (-np.log(1 - np.clip(a, 0, 0.99999))) ** 0.5,
+    "A3: Nucleation and Growth (Avrami–Erofeev, n = 3)": lambda a: (-np.log(1 - np.clip(a, 0, 0.99999))) ** (1 / 3),
+    "R2: Phase Boundary Controlled – 2D": lambda a: 1 - (1 - a) ** (1 / 2),
+    "R3: Phase Boundary Controlled – 3D": lambda a: 1 - (1 - a) ** (1 / 3),
+    "C1: Reaction Order Model (First Order)": lambda a: -np.log(1 - np.clip(a, 0, 0.99999)),
+    "C2: Reaction Order Model (Second Order)": lambda a: (1 - a)**-1 - 1,
+    "P2: Power Law Model (n=2)": lambda a: a ** 0.5,
+    "P3: Power Law Model (n=3)": lambda a: a ** (1/3),
+    "P4: Power Law Model (n=4)": lambda a: a ** (1/4)
 }
 
 model_name = st.selectbox("✔️ Choose a Reaction Model", list(model_dict.keys()))
