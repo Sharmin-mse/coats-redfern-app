@@ -6,12 +6,32 @@ import scipy.optimize as opt
 from sklearn.metrics import r2_score, mean_absolute_error
 from io import BytesIO
 
+# Page settings
 st.set_page_config(page_title="Coats-Redfern Kinetic Model Fitting", layout="centered")
 
 st.title("🔥 Coats-Redfern Kinetic Model Fitting Tool")
 
-uploaded_file = st.file_uploader("Upload Excel File", type=["xlsx"])
-beta = st.number_input("Enter Heating Rate (β) in K/min", value=20.0)
+# 📌 Instructions for the user
+st.markdown("### 📄 Excel File Format")
+st.markdown(
+    """
+    Please upload an `.xlsx` file with the following two columns (exact names):
+
+    - **Temperature/K** → in Kelvin (K)
+    - **Degree of Reaction (α)** → between 0 and 1
+
+    Example:
+
+    | Temperature/K | Degree of Reaction (α) |
+    |---------------|------------------------|
+    | 700           | 0.12                   |
+    | 750           | 0.22                   |
+    | 800           | 0.45                   |
+    """
+)
+
+uploaded_file = st.file_uploader("📤 Upload Excel File", type=["xlsx"])
+beta = st.number_input("🔥 Enter Heating Rate (β) in K/min", value=20.0)
 
 model_dict = {
     "D2: 2D Diffusion": lambda a: (1 - a) * np.log(1 - a) + a,
@@ -28,30 +48,46 @@ model_dict = {
     "P4: Power Law (n=4)": lambda a: a ** (1/4)
 }
 
-model_name = st.selectbox("Choose a Reaction Model", list(model_dict.keys()))
+model_name = st.selectbox("🧪 Choose a Reaction Model", list(model_dict.keys()))
 
 if uploaded_file:
-    df = pd.read_excel(uploaded_file)
-    T = df["Temperature/K"].values
-    alpha = df["Degree of Reaction (α)"].values
-
-    valid = (alpha > 0.1) & (alpha < 0.9)
-    T = T[valid]
-    alpha = alpha[valid]
-
-    g_alpha = model_dict[model_name](alpha)
-    y = np.log(g_alpha / T**2)
-
-    def coats_redfern(T, E_a, A):
-        T_mean = np.mean(T)
-        term_inside_log = 1 - ((2 * 8.314 * T_mean) / E_a)
-        log_argument = ((A * 8.314) / (E_a * beta)) * term_inside_log
-        log_argument = np.clip(log_argument, 1e-20, None)
-        ln_term = np.log(log_argument)
-        return - (E_a / 8.314) * (1 / T) + ln_term
-
     try:
-        params, _ = opt.curve_fit(coats_redfern, T, y, p0=[150000, 1e10])
+        df = pd.read_excel(uploaded_file)
+
+        # Check for required columns
+        if not {"Temperature/K", "Degree of Reaction (α)"}.issubset(df.columns):
+            st.error("❌ Error: Your file must contain **'Temperature/K'** and **'Degree of Reaction (α)'** columns.")
+            st.stop()
+
+        # Show the first few rows
+        st.markdown("✅ **File Preview:**")
+        st.dataframe(df.head())
+
+        T = df["Temperature/K"].values
+        alpha = df["Degree of Reaction (α)"].values
+
+        valid = (alpha > 0.1) & (alpha < 0.9)
+        T = T[valid]
+        alpha = alpha[valid]
+
+        g_alpha = model_dict[model_name](alpha)
+        y = np.log(g_alpha / T**2)
+
+        def coats_redfern(T, E_a, A):
+            T_mean = np.mean(T)
+            term_inside_log = 1 - ((2 * 8.314 * T_mean) / E_a)
+            log_argument = ((A * 8.314) / (E_a * beta)) * term_inside_log
+            log_argument = np.clip(log_argument, 1e-20, None)
+            ln_term = np.log(log_argument)
+            return - (E_a / 8.314) * (1 / T) + ln_term
+
+        # Fitting with better initial guess and higher maxfev
+        params, _ = opt.curve_fit(
+            coats_redfern, T, y,
+            p0=[120000, 1e8],
+            maxfev=10000
+        )
+
         E_fit, A_fit = params
         E_fit_kJ = E_fit / 1000
 
@@ -70,12 +106,14 @@ if uploaded_file:
         ax.grid(True)
 
         st.pyplot(fig)
+
         st.markdown(f"**Activation Energy (Eₐ):** {E_fit_kJ:.2f} kJ/mol")
         st.markdown(f"**Pre-exponential Factor (A):** {A_fit:.2e} 1/min")
         st.markdown(f"**R²:** {r2:.4f}")
         st.markdown(f"**MAE:** {mae:.4f}")
         st.markdown(f"**MAPE:** {mape:.2f}%")
 
+        # Downloadable PNG
         buf = BytesIO()
         fig.savefig(buf, format="png", dpi=300)
         st.download_button(
@@ -86,4 +124,4 @@ if uploaded_file:
         )
 
     except Exception as e:
-        st.error(f"Error during fitting: {e}")
+        st.error(f"❌ Fitting failed: {str(e)}\n\nMake sure the model fits your data and the input is correct.")
