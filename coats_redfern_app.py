@@ -103,8 +103,8 @@ if uploaded_file:
 
         # Plotting
         fig, ax = plt.subplots()
-        ax.scatter(1/T, y, label='Data', color='red', alpha=0.6)
-        ax.plot(1/T, y_fit, label='Fit', color='blue')
+        ax.scatter(1/T, y, label='Experimental Data', color='red', alpha=0.6)
+        ax.plot(1/T, y_fit, label='Fitted Line', color='blue')
         ax.set_xlabel("1 / T (K⁻¹)")
         ax.set_ylabel("ln[g(α)/T²]")
         ax.set_title(f"Coats-Redfern Fit ({model_name})")
