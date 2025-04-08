@@ -118,7 +118,7 @@ if uploaded_file:
 
         # Output parameters
         st.markdown(f"**Activation Energy (Eₐ):** {E_fit_kJ:.2f} kJ/mol")
-        st.markdown(f"**Pre-exponential Factor (A):** {A_fit:.2e} 1/min")
+        st.markdown(f"**Pre-exponential Factor (A):** {A_fit:.2e} min⁻¹")
         st.markdown(f"**R²:** {r2:.4f}")
         st.markdown(f"**MAE:** {mae:.4f}")
         st.markdown(f"**MAPE:** {mape:.2f}%")
