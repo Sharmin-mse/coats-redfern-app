@@ -1,3 +1,11 @@
+import streamlit as st
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import scipy.optimize as opt
+from sklearn.metrics import r2_score, mean_absolute_error
+from io import BytesIO
+
 # Reduce extra top padding
 st.markdown(
     """
@@ -10,14 +18,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
-import streamlit as st
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import scipy.optimize as opt
-from sklearn.metrics import r2_score, mean_absolute_error
-from io import BytesIO
 
 # Page settings
 st.set_page_config(page_title="Coats-Redfern Kinetic Model Fitting", layout="centered")
