@@ -9,7 +9,7 @@ from io import BytesIO
 # Page settings
 st.set_page_config(page_title="Coats-Redfern Kinetic Model Fitting", layout="centered")
 
-st.title("🔥 Coats-Redfern Kinetic Model Fitting Tool")
+st.title("📈 Coats-Redfern Kinetic Model Fitting Tool")
 
 # 📌 Instructions for the user
 st.markdown("### 📄 Excel File Format")
@@ -48,7 +48,7 @@ model_dict = {
     "P4: Power Law (n=4)": lambda a: a ** (1/4)
 }
 
-model_name = st.selectbox("🧪 Choose a Reaction Model", list(model_dict.keys()))
+model_name = st.selectbox("✔️ Choose a Reaction Model", list(model_dict.keys()))
 
 if uploaded_file:
     try:
@@ -111,10 +111,9 @@ if uploaded_file:
         ax.legend()
         ax.grid(True)
 
-        # ✨ Rotate + scientific notation on x-axis
+        # ✨ Rotate notation on x-axis
         plt.xticks(rotation=45)
-        ax.ticklabel_format(axis='x', style='sci', scilimits=(0, 0))
-
+        
         st.pyplot(fig)
 
         # Output parameters
