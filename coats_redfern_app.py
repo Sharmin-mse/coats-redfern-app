@@ -21,10 +21,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
-# Page settings
-st.set_page_config(page_title="Coats-Redfern Kinetic Model Fitting", layout="centered")
-
 st.title("📈 Coats-Redfern Kinetic Model Fitting Tool")
 
 # 📌 Instructions for the user
