@@ -75,6 +75,10 @@ if uploaded_file:
         st.markdown("✅ **File Preview:**")
         st.dataframe(df.head())
 
+        # Extract data
+        T = df["Temperature/K"].values
+        alpha = df["Degree of Reaction (α)"].values
+
 	st.markdown("### 📉 Degree of Reaction vs Temperature")
 
 	fig2, ax2 = plt.subplots()
@@ -85,10 +89,6 @@ if uploaded_file:
 	ax2.grid(True)
 
 	st.pyplot(fig2)
-
-        # Extract data
-        T = df["Temperature/K"].values
-        alpha = df["Degree of Reaction (α)"].values
 
         # Filter valid α range
         valid = (alpha > 0.1) & (alpha < 0.9)
