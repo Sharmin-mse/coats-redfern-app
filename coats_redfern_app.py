@@ -83,7 +83,7 @@ if uploaded_file:
         st.markdown("### 📉 Degree of Reaction vs Temperature")
 
         fig2, ax2 = plt.subplots()
-        ax2.plot(T, alpha, marker='o', linestyle='-', color='green')
+        ax2.plot(T, alpha, marker='o', linestyle='-', color='green', linewidth=1)
         ax2.set_xlabel("Temperature (K)")
         ax2.set_ylabel("Degree of Reaction (α)")
         ax2.set_title("Degree of Reaction vs Temperature")
