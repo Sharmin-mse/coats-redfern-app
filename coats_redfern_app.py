@@ -79,7 +79,7 @@ if uploaded_file:
         T = df["Temperature/K"].values
         alpha = df["Degree of Reaction (α)"].values
 
-	st.markdown("### 📉 Degree of Reaction vs Temperature")
+    st.markdown("### 📉 Degree of Reaction vs Temperature")
 
 	fig2, ax2 = plt.subplots()
 	ax2.plot(T, alpha, marker='o', linestyle='-', color='green')
